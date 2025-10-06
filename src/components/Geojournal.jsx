@@ -55,18 +55,10 @@ function Geojournal() {
                   Lat: {marker.lat.toFixed(4)}, Lng: {marker.lng.toFixed(4)}
                   <br />
                   <button 
+                    className='bg-red-500 text-white rounded-md px-2 py-1 cursor-pointer mt-2'
                     onClick={(e) => {
                       e.stopPropagation(); 
                       handleRemoveMarker(index);
-                    }}
-                    style={{
-                      marginTop: '10px',
-                      padding: '5px 10px',
-                      color: 'white',
-                      backgroundColor: 'red',
-                      border: 'none',
-                      borderRadius: '3px',
-                      cursor: 'pointer'
                     }}
                   >
                     Remove Marker

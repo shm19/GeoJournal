@@ -1,4 +1,3 @@
-// SearchControl.js
 import { useState, useRef, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -13,8 +12,8 @@ function SearchControl() {
     const container = containerRef.current;
     if (container) {
       L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.disableScrollPropagation(container);
     }
-
   }, []);
 
   const handleSubmit = async (e) => {
@@ -30,7 +29,7 @@ function SearchControl() {
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         const latLng = [parseFloat(lat), parseFloat(lon)];
-        
+        setQuery('');
         map.flyTo(latLng, 16); 
       } else {
         alert('Place not found. Please try another search.');

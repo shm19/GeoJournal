@@ -1,9 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Home from '../components/Home'
 import Navbar from '../components/Navbar'
+import ErrorPage from '../components/ErrorPage'
 import Geojournal from '../components/Geojournal'
 import History from '../components/History'
-import ErrorPage from '../components/ErrorPage'
+
 
 const router = createBrowserRouter([
   {
