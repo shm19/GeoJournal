@@ -81,7 +81,7 @@ function Geojournal() {
               <Marker
                 key={index}
                 position={trip.marker}
-                icon={selectedTripIndex === index ? selectedIcon : newCustomIcon}
+                icon={selectedTripIndex === index && showingTripDetails ? selectedIcon : newCustomIcon}
                 eventHandlers={{
                   click: () => {
                     setSelectedTripIndex(index);
@@ -103,6 +103,7 @@ function Geojournal() {
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemoveTrip(index);
+                      setShowingTripDetails(false);
                     }}
                   >
                     Remove Trip

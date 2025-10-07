@@ -5,13 +5,20 @@
   height: 100vh;
 }
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 
 @layer components {
   .form-input {
-    @apply outline-none border-2 border-gray-300 rounded-md;
+    @apply outline-none border-2 border-gray-300 rounded-md text-right px-2 py-1;
   }
   .form-textarea {
-    @apply outline-none border-2 border-gray-300 rounded-md resize-none;
+    @apply outline-none border-2 border-gray-300 rounded-md resize-none text-right px-2 py-1;
   }
   .form-button {
     @apply bg-blue-500 text-white rounded-md px-2 py-1 cursor-pointer;
