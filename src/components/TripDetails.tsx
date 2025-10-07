@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import useTripStore from "../store";
+import TripCallout from "./TripCallout";
 
 interface TripDetailsProps {
   selectedTripIndex: number;
   showingTripDetails: boolean;
   setShowingTripDetails: (showing: boolean) => void;
+  setSelectedTripIndex: (index: number) => void;
 }
 
-function TripDetails({ selectedTripIndex = -1, showingTripDetails, setShowingTripDetails }: TripDetailsProps) {
+function TripDetails({ selectedTripIndex = -1, showingTripDetails, setShowingTripDetails, setSelectedTripIndex }: TripDetailsProps) {
 
   const [tripTitle, setTripTitle] = useState("");
   const [tripDescription, setTripDescription] = useState("");
@@ -32,7 +34,7 @@ function TripDetails({ selectedTripIndex = -1, showingTripDetails, setShowingTri
   }, [selectedTrip]);
 
   if (!showingTripDetails) {
-    return <div>No trip details</div>;
+    return <TripCallout setSelectedTripIndex={setSelectedTripIndex} setShowingTripDetails={setShowingTripDetails}/>;
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,8 +49,6 @@ function TripDetails({ selectedTripIndex = -1, showingTripDetails, setShowingTri
     if (tripRating < 1 || tripRating > 5) {
       setFormError((prev) => ({ ...prev, rating: "Rating should be a number between 1 and 5" }));
     }
-    console.log(formError);
-    console.log({title: tripTitle, description: tripDescription, rating: tripRating});
     if (Object.values(formError).some((error) => error !== "")) {
       return;
     }

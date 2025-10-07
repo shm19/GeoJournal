@@ -56,18 +56,33 @@ function Geojournal() {
 
   useEffect(() => {
     setSelectedTripIndex(trips.length - 1);
-    console.log("trips", trips);
-    console.log("showingTripDetails", showingTripDetails);
+  }, [trips]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowingTripDetails(false);
+        const filteredTrips = trips.filter(
+          (trip) => trip.title !== "" && trip.description !== "" && trip.rating !== 0
+        );
+        setTrips(filteredTrips);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [trips]);
 
   return (
     <div>
       <div className="flex">
-        <div className="w-1/4 bg-blue-200 h-screen">
+        <div className="w-1/4 h-screen bg-gray-800">
           <TripDetails
             selectedTripIndex={selectedTripIndex}
             showingTripDetails={showingTripDetails}
             setShowingTripDetails={setShowingTripDetails}
+            setSelectedTripIndex={setSelectedTripIndex}
           />
         </div>
         <div className="w-3/4 bg-red-200 h-screen">
