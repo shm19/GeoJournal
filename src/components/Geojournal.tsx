@@ -1,4 +1,3 @@
-// @todo: marker popup contains unuseful information
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -17,6 +16,13 @@ const newCustomIcon = L.icon({
   popupAnchor: [0, -38],
 });
 
+const selectedIcon = L.icon({
+  iconUrl: customIconUrl,
+  iconSize: [50, 50],
+  iconAnchor: [25, 50],
+  popupAnchor: [0, -50],
+});
+
 function MapClickHandler({ onMapClick }: { onMapClick: (latlng: L.LatLng) => void }) {
   useMapEvents({
     click(e) {
@@ -30,14 +36,18 @@ function MapClickHandler({ onMapClick }: { onMapClick: (latlng: L.LatLng) => voi
 function Geojournal() {
   const { trips, setTrips } = useTripStore((state) => state);
   const [selectedTripIndex, setSelectedTripIndex] = useState<number>(-1);
+  const [showingTripDetails, setShowingTripDetails] = useState<boolean>(false);
 
   const handleClick = (latlng: L.LatLng) => {
-    const filteredTrips = trips.filter((trip) => trip.title !== "" && trip.description !== "" && trip.rating !== 0);
+    const filteredTrips = trips.filter(
+      (trip) => trip.title !== "" && trip.description !== "" && trip.rating !== 0
+    );
     setTrips(filteredTrips);
     setTrips([
       ...filteredTrips,
       { title: "", description: "", rating: 0, marker: [latlng.lat, latlng.lng] },
     ]);
+    setShowingTripDetails(true);
   };
 
   const handleRemoveTrip = (indexToRemove: number) => {
@@ -46,6 +56,8 @@ function Geojournal() {
 
   useEffect(() => {
     setSelectedTripIndex(trips.length - 1);
+    console.log("trips", trips);
+    console.log("showingTripDetails", showingTripDetails);
   }, [trips]);
 
   return (
@@ -53,8 +65,9 @@ function Geojournal() {
       <div className="flex">
         <div className="w-1/4 bg-blue-200 h-screen">
           <TripDetails
-            selectedTripIndex={selectedTripIndex ?? -1}
-            setSelectedTripIndexIndex={setSelectedTripIndex}
+            selectedTripIndex={selectedTripIndex}
+            showingTripDetails={showingTripDetails}
+            setShowingTripDetails={setShowingTripDetails}
           />
         </div>
         <div className="w-3/4 bg-red-200 h-screen">
@@ -68,15 +81,21 @@ function Geojournal() {
               <Marker
                 key={index}
                 position={trip.marker}
-                icon={newCustomIcon}
+                icon={selectedTripIndex === index ? selectedIcon : newCustomIcon}
                 eventHandlers={{
                   click: () => {
                     setSelectedTripIndex(index);
+                    setShowingTripDetails(true);
                   },
                 }}
               >
                 <Popup>
-                  Marker Position: <br />
+                  {trip.title ? (
+                    <p className="m-0">
+                      Trip Title: {trip.title}
+                    </p>
+                  ) : null}
+                  Trip Position: <br />
                   Lat: {trip.marker[0].toFixed(4)}, Lng: {trip.marker[1].toFixed(4)}
                   <br />
                   <button
@@ -86,7 +105,7 @@ function Geojournal() {
                       handleRemoveTrip(index);
                     }}
                   >
-                    Remove Marker
+                    Remove Trip
                   </button>
                 </Popup>
               </Marker>

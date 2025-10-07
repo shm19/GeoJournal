@@ -1,17 +1,23 @@
-// @todo: handle form validation
 import { useState, useEffect } from "react";
 import useTripStore from "../store";
 
 interface TripDetailsProps {
   selectedTripIndex: number;
-  setSelectedTripIndexIndex: (index: number) => void;
+  showingTripDetails: boolean;
+  setShowingTripDetails: (showing: boolean) => void;
 }
 
-function TripDetails({ selectedTripIndex = -1, setSelectedTripIndexIndex }: TripDetailsProps) {
-  console.log("selectedTripIndex", selectedTripIndex);
+function TripDetails({ selectedTripIndex = -1, showingTripDetails, setShowingTripDetails }: TripDetailsProps) {
+
   const [tripTitle, setTripTitle] = useState("");
   const [tripDescription, setTripDescription] = useState("");
   const [tripRating, setTripRating] = useState(0);  
+  
+  const [formError, setFormError] = useState({
+    title: "",
+    description: "",
+    rating: "",
+  });
 
   const updateTrip = useTripStore((state) => state.updateTrip);
   const trips = useTripStore((state) => state.trips);
@@ -25,15 +31,30 @@ function TripDetails({ selectedTripIndex = -1, setSelectedTripIndexIndex }: Trip
     }
   }, [selectedTrip]);
 
-  if (selectedTripIndex === -1) {
+  if (!showingTripDetails) {
     return <div>No trip details</div>;
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormError({ title: "", description: "", rating: "" });
+    if (tripTitle === "" || tripTitle.length < 3) {
+      setFormError((prev) => ({ ...prev, title: "Title should be at least 3 characters" }));
+    }
+    if (tripDescription === "" || tripDescription.length < 3) {
+      setFormError((prev) => ({ ...prev, description: "Description should be at least 3 characters" }));
+    }
+    if (tripRating < 1 || tripRating > 5) {
+      setFormError((prev) => ({ ...prev, rating: "Rating should be a number between 1 and 5" }));
+    }
+    console.log(formError);
+    console.log({title: tripTitle, description: tripDescription, rating: tripRating});
+    if (Object.values(formError).some((error) => error !== "")) {
+      return;
+    }
     updateTrip(selectedTripIndex, {title: tripTitle, description: tripDescription, rating: tripRating});
     clearForm();
-    setSelectedTripIndexIndex(-1);
+    setShowingTripDetails(false);
   }
 
   const clearForm = () => {
@@ -55,6 +76,7 @@ function TripDetails({ selectedTripIndex = -1, setSelectedTripIndexIndex }: Trip
           value={tripTitle}
           onChange={(e) => setTripTitle(e.target.value)}
         />
+        {formError.title && <p className="text-red-500">{formError.title}</p>}
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="description">Description</label>
@@ -67,6 +89,7 @@ function TripDetails({ selectedTripIndex = -1, setSelectedTripIndexIndex }: Trip
           onChange={(e) => setTripDescription(e.target.value)}
           rows={4}
         />
+        {formError.description && <p className="text-red-500">{formError.description}</p>}
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="rating">Rating</label>
@@ -79,6 +102,7 @@ function TripDetails({ selectedTripIndex = -1, setSelectedTripIndexIndex }: Trip
           value={tripRating}
           onChange={(e) => setTripRating(parseInt(e.target.value))}
         />
+        {formError.rating && <p className="text-red-500">{formError.rating}</p>}
       </div>
       <button type="submit" className="form-button">
         Save
