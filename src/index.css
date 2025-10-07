@@ -4,3 +4,16 @@
 .leaflet-container {
   height: 100vh;
 }
+
+
+@layer components {
+  .form-input {
+    @apply outline-none border-2 border-gray-300 rounded-md;
+  }
+  .form-textarea {
+    @apply outline-none border-2 border-gray-300 rounded-md resize-none;
+  }
+  .form-button {
+    @apply bg-blue-500 text-white rounded-md px-2 py-1 cursor-pointer;
+  }
+}
